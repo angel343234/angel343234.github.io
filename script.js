@@ -302,7 +302,7 @@
 
     function zoomToPoint(zoomDir, originX, originY) {
         const zoomDelta = zoomDir > 0 ? 0.15 : -0.15;
-        const newZoom = Math.max(0.2, Math.min(zoom + zoomDelta, 4));
+        const newZoom = Math.max(0.05, Math.min(zoom + zoomDelta, 20));
         if (newZoom !== zoom) {
             panX = originX - (originX - panX) * (newZoom / zoom);
             panY = originY - (originY - panY) * (newZoom / zoom);
@@ -545,23 +545,26 @@
             .replace(/\s+/g, '_');
 
         const svgClone = svgEl.cloneNode(true);
-        const rect = svgEl.getBoundingClientRect();
 
-        let w = rect.width;
-        let h = rect.height;
-        if (!w || !h) {
-            const viewBox = svgClone.getAttribute('viewBox');
-            if (viewBox) {
-                const vbParts = viewBox.split(' ');
-                w = parseFloat(vbParts[2]);
-                h = parseFloat(vbParts[3]);
-            } else {
-                w = 800; h = 600;
-            }
+        let w, h;
+        const viewBox = svgClone.getAttribute('viewBox');
+        if (viewBox) {
+            const vbParts = viewBox.split(' ');
+            w = parseFloat(vbParts[2]);
+            h = parseFloat(vbParts[3]);
+        } else {
+            const rect = svgEl.getBoundingClientRect();
+            w = rect.width / zoom;
+            h = rect.height / zoom;
         }
+
+        if (!w || !h) { w = 800; h = 600; }
 
         svgClone.setAttribute('width', w);
         svgClone.setAttribute('height', h);
+        svgClone.style.maxWidth = 'none';
+        svgClone.style.width = w + 'px';
+        svgClone.style.height = h + 'px';
 
         const svgData = new XMLSerializer().serializeToString(svgClone);
         const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
@@ -569,10 +572,10 @@
         const img = new Image();
 
         img.onload = () => {
-            const scale = 2; // High quality
+            const scale = 4; // High quality
             const canvas = document.createElement('canvas');
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
+            canvas.width = w * scale;
+            canvas.height = h * scale;
             const ctx = canvas.getContext('2d');
 
             // Fill with chosen background color
