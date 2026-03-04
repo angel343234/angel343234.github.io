@@ -217,7 +217,28 @@
 
         try {
             const id = `mermaid-${Date.now()}`;
-            const { svg } = await mermaid.render(id, code);
+            let { svg } = await mermaid.render(id, code);
+
+            // Prevent Mermaid from squishing the diagram to 100% viewport width
+            const temp = document.createElement('div');
+            temp.innerHTML = svg;
+            const svgEl = temp.querySelector('svg');
+            if (svgEl) {
+                const viewBox = svgEl.getAttribute('viewBox');
+                if (viewBox) {
+                    const vbParts = viewBox.split(' ');
+                    const w = parseFloat(vbParts[2]);
+                    const h = parseFloat(vbParts[3]);
+                    if (w && h) {
+                        svgEl.style.width = w + 'px';
+                        svgEl.style.height = h + 'px';
+                        svgEl.setAttribute('width', w);
+                        svgEl.setAttribute('height', h);
+                    }
+                }
+                svgEl.style.maxWidth = 'none';
+                svg = temp.innerHTML;
+            }
 
             if (currentRender !== renderCounter) return; // Stale render
 
