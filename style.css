@@ -645,15 +645,17 @@ html[data-theme="light"] .panel-header.glass {
 }
 
 /* ── OVERRIDE MERMAID SVG NATIVE LABELS ── */
-/* When htmlLabels is false, edge labels (text on lines) lack proper solid backgrounds. 
-   This forces them to use the user's selected background color as a solid mask. */
-#mermaidOutput svg .edgeLabel:has(tspan:not(:empty)) rect {
+/* Force full solid backgrounds for text placed over connector lines */
+#mermaidOutput svg .edgeLabel rect,
+#mermaidOutput svg .label-bg {
     fill: var(--diagram-bg, #ffffff) !important;
+    opacity: 1 !important;
 }
 
-#mermaidOutput svg .label-bg:has(~ text tspan:not(:empty)),
-#mermaidOutput svg .label-bg:has(~ foreignObject > div:not(:empty)) {
-    fill: var(--diagram-bg, #ffffff) !important;
+#mermaidOutput svg .edgeLabel foreignObject div,
+#mermaidOutput svg .edgeLabel foreignObject span {
+    background-color: var(--diagram-bg, #ffffff) !important;
+    opacity: 1 !important;
 }
 
 /* ── GLOBAL APP FOOTER ── */
