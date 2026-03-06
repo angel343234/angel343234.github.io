@@ -162,35 +162,103 @@
     };
 
     // ── Initialize Mermaid ──
+    // Mermaid v10 doesn't reliably re-apply named themes after re-init.
+    // We force theme:'base' + explicit themeVariables for each look.
+    const mermaidThemes = {
+        default: {
+            background: '#ffffff',
+            primaryColor: '#ECECFF',
+            primaryTextColor: '#333333',
+            primaryBorderColor: '#9370DB',
+            lineColor: '#333333',
+            secondaryColor: '#ffffde',
+            tertiaryColor: '#f4f4f4',
+            nodeBorder: '#9370DB',
+            clusterBkg: '#ffffde',
+            clusterBorder: '#aaaa33',
+            edgeLabelBackground: '#e8e0ff',
+            textColor: '#333333',
+            mainBkg: '#ECECFF',
+            nodeTextColor: '#333333'
+        },
+        dark: {
+            background: '#0d1117',
+            primaryColor: '#21263d',
+            primaryTextColor: '#e2e8f0',
+            primaryBorderColor: '#475569',
+            lineColor: '#8ca6f9',
+            secondaryColor: '#282f42',
+            tertiaryColor: '#151b2b',
+            nodeBorder: '#475569',
+            clusterBkg: '#181f2f',
+            clusterBorder: '#475569',
+            edgeLabelBackground: '#2d3555',
+            textColor: '#e2e8f0',
+            mainBkg: '#21263d',
+            nodeTextColor: '#e2e8f0'
+        },
+        forest: {
+            background: '#eaf0ea',
+            primaryColor: '#cde498',
+            primaryTextColor: '#1a2e05',
+            primaryBorderColor: '#6eaa49',
+            lineColor: '#2d5016',
+            secondaryColor: '#cdffb2',
+            tertiaryColor: '#eef9e5',
+            nodeBorder: '#6eaa49',
+            clusterBkg: '#d8f0c8',
+            clusterBorder: '#6eaa49',
+            edgeLabelBackground: '#d4ecc0',
+            textColor: '#1a2e05',
+            mainBkg: '#cde498',
+            nodeTextColor: '#1a2e05'
+        },
+        neutral: {
+            background: '#f4f4f4',
+            primaryColor: '#e8e8e8',
+            primaryTextColor: '#333333',
+            primaryBorderColor: '#999999',
+            lineColor: '#666666',
+            secondaryColor: '#d4d4d4',
+            tertiaryColor: '#f0f0f0',
+            nodeBorder: '#999999',
+            clusterBkg: '#e0e0e0',
+            clusterBorder: '#aaaaaa',
+            edgeLabelBackground: '#dcdcdc',
+            textColor: '#333333',
+            mainBkg: '#e8e8e8',
+            nodeTextColor: '#333333'
+        },
+        base: {
+            background: '#ffffff',
+            primaryColor: '#f0f4ff',
+            primaryTextColor: '#1e293b',
+            primaryBorderColor: '#6366f1',
+            lineColor: '#6366f1',
+            secondaryColor: '#e0e7ff',
+            tertiaryColor: '#f8fafc',
+            nodeBorder: '#6366f1',
+            clusterBkg: '#eef2ff',
+            clusterBorder: '#818cf8',
+            edgeLabelBackground: '#dde4ff',
+            textColor: '#1e293b',
+            mainBkg: '#f0f4ff',
+            nodeTextColor: '#1e293b'
+        }
+    };
+
     function initMermaid(theme = 'default') {
+        const vars = mermaidThemes[theme] || mermaidThemes.default;
         const config = {
             startOnLoad: false,
             securityLevel: 'loose',
             fontFamily: "'Inter', sans-serif",
+            theme: 'base',
+            themeVariables: vars,
             flowchart: { htmlLabels: false, curve: 'basis' },
             sequence: { actorMargin: 80, mirrorActors: false, useMaxWidth: false },
             gantt: { useMaxWidth: false }
         };
-
-        if (theme === 'dark') {
-            config.theme = 'base';
-            config.themeVariables = {
-                background: '#0d1117',
-                primaryColor: '#21263d',
-                primaryTextColor: '#e2e8f0',
-                primaryBorderColor: '#475569',
-                lineColor: '#8ca6f9',
-                secondaryColor: '#282f42',
-                tertiaryColor: '#151b2b',
-                nodeBorder: '#475569',
-                clusterBkg: '#181f2f',
-                clusterBorder: '#475569',
-                edgeLabelBackground: '#0d1117',
-                textColor: '#e2e8f0'
-            };
-        } else {
-            config.theme = theme;
-        }
 
         mermaid.initialize(config);
     }
@@ -432,9 +500,8 @@
     // ── Mermaid Theme ──
     selectMermaidTheme.addEventListener('change', () => {
         const t = selectMermaidTheme.value;
-        if (t === 'dark') bgColorPicker.value = '#0d1117';
-        else if (t === 'forest') bgColorPicker.value = '#eaf0ea';
-        else bgColorPicker.value = '#ffffff';
+        const vars = mermaidThemes[t] || mermaidThemes.default;
+        bgColorPicker.value = vars.background;
         bgColorPicker.dispatchEvent(new Event('input'));
 
         initMermaid(t);
@@ -454,14 +521,18 @@
     const btnThemeToggle = $('#btnThemeToggle');
     let isDark = true;
 
+    // SVG icons for theme toggle
+    const moonIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+    const sunIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+
     btnThemeToggle.addEventListener('click', () => {
         isDark = !isDark;
         if (isDark) {
             document.documentElement.removeAttribute('data-theme');
-            btnThemeToggle.querySelector('.btn-icon').textContent = '🌙';
+            btnThemeToggle.innerHTML = moonIcon;
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
-            btnThemeToggle.querySelector('.btn-icon').textContent = '☀️';
+            btnThemeToggle.innerHTML = sunIcon;
         }
     });
 
@@ -469,16 +540,20 @@
     const btnFullscreen = $('#btnFullscreen');
     const btnExitFullscreen = $('#btnExitFullscreen');
 
+    // SVG icons for fullscreen
+    const expandIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+    const shrinkIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>`;
+
     function enterFullscreen() {
         isFullscreen = true;
         document.body.classList.add('fullscreen-preview');
-        btnFullscreen.querySelector('.btn-icon').textContent = '⊗';
+        btnFullscreen.innerHTML = shrinkIcon;
     }
 
     function exitFullscreen() {
         isFullscreen = false;
         document.body.classList.remove('fullscreen-preview');
-        btnFullscreen.querySelector('.btn-icon').textContent = '⛶';
+        btnFullscreen.innerHTML = expandIcon;
     }
 
     btnFullscreen.addEventListener('click', () => {
@@ -682,6 +757,94 @@
                 showError('Error al crear el PDF. Detalles en consola.');
                 setStatus('error');
             }
+
+            URL.revokeObjectURL(url);
+        };
+
+        img.onerror = () => {
+            showError('Error al procesar la imagen del diagrama');
+            setStatus('error');
+            URL.revokeObjectURL(url);
+        };
+
+        img.src = url;
+    });
+
+    // ── Export PNG ──
+    $('#btnExportPNG').addEventListener('click', () => {
+        const svgEl = mermaidOutput.querySelector('svg');
+        if (!svgEl) {
+            showError('No hay diagrama para exportar');
+            setTimeout(hideError, 3000);
+            return;
+        }
+
+        statusText.textContent = 'Generando PNG...';
+        setStatus('rendering');
+
+        const fileName = (diagramNameInput.value.trim() || 'Mi Diagrama')
+            .replace(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑüÜ\s\-_]/g, '')
+            .replace(/\s+/g, '_');
+
+        const svgClone = svgEl.cloneNode(true);
+
+        let w, h;
+        const viewBox = svgClone.getAttribute('viewBox');
+        if (viewBox) {
+            const vbParts = viewBox.split(' ');
+            w = parseFloat(vbParts[2]);
+            h = parseFloat(vbParts[3]);
+        } else {
+            const rect = svgEl.getBoundingClientRect();
+            w = rect.width / zoom;
+            h = rect.height / zoom;
+        }
+
+        if (!w || !h) { w = 800; h = 600; }
+
+        svgClone.setAttribute('width', w);
+        svgClone.setAttribute('height', h);
+        svgClone.style.maxWidth = 'none';
+        svgClone.style.width = w + 'px';
+        svgClone.style.height = h + 'px';
+
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+
+        img.onload = () => {
+            // 2x scale for crisp quality, capped to prevent huge files
+            let scale = 2;
+            const MAX_DIMENSION = 6000;
+            if (w * scale > MAX_DIMENSION || h * scale > MAX_DIMENSION) {
+                scale = Math.max(1, Math.min(MAX_DIMENSION / w, MAX_DIMENSION / h, 2));
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = w * scale;
+            canvas.height = h * scale;
+            const ctx = canvas.getContext('2d');
+
+            // Fill background
+            ctx.fillStyle = bgColorPicker.value;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Export as PNG with slight compression
+            canvas.toBlob((pngBlob) => {
+                const pngUrl = URL.createObjectURL(pngBlob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pngUrl;
+                downloadLink.download = `${fileName}.png`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                setTimeout(() => URL.revokeObjectURL(pngUrl), 100);
+
+                statusText.textContent = 'PNG exportado ✓';
+                setTimeout(() => setStatus('ready'), 2500);
+            }, 'image/png');
 
             URL.revokeObjectURL(url);
         };

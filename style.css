@@ -644,18 +644,20 @@ html[data-theme="light"] .panel-header.glass {
     max-width: none !important;
 }
 
-/* ── OVERRIDE MERMAID SVG NATIVE LABELS ── */
-/* Force full solid backgrounds for text placed over connector lines */
+/* ── STYLED EDGE LABELS ── */
+/* Let Mermaid theme colors come through; add subtle styling */
 #mermaidOutput svg .edgeLabel rect,
 #mermaidOutput svg .label-bg {
-    fill: var(--diagram-bg, #ffffff) !important;
     opacity: 1 !important;
+    rx: 4;
+    ry: 4;
 }
 
 #mermaidOutput svg .edgeLabel foreignObject div,
 #mermaidOutput svg .edgeLabel foreignObject span {
-    background-color: var(--diagram-bg, #ffffff) !important;
     opacity: 1 !important;
+    border-radius: 4px;
+    padding: 1px 4px;
 }
 
 /* ── GLOBAL APP FOOTER ── */
